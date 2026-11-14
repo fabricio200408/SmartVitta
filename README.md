@@ -30,7 +30,7 @@ Os três caminhos do fluxo aparecem no vídeo de demonstração:
 ## Como funciona
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[WhatsApp<br/>foto da nota] --> B[Webhook no Make]
     B --> C{Número<br/>autorizado?}
     C -->|não| X[Ignora]
