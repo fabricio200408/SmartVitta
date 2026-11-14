@@ -71,10 +71,42 @@ Cenário no Make, com uma execução completa:
 - O código impresso na nota nem sempre é um código de barras. Códigos internos da loja só servem para comparar preços dentro do mesmo estabelecimento.
 - Em Tabelas do Google Sheets, o formato das linhas novas vem do tipo da coluna, não da formatação das células.
 
+## Avaliação
+
+Rodei a extração em 13 fotos de notas reais de 4 supermercados, com o mesmo modelo, prompt e schema do cenário ([script](eval/extrair.py)), e conferi cada campo contra a nota. 12 notas foram processadas (95 itens) e 1 não foi.
+
+| Campo | Acertos | Total | Taxa |
+|---|---|---|---|
+| Itens encontrados, sem faltar nem sobrar | 95 | 95 | 100% |
+| Quantidade | 95 | 95 | 100% |
+| Código do produto | 94 | 95 | 98,9% |
+| Categoria | 93 | 95 | 97,9% |
+| Valor total do item | 92 | 95 | 96,8% |
+| Total da nota | 12 | 12 | 100% |
+
+O que os erros mostram:
+
+- **Nota de 58 itens não processada.** A resposta estourou o limite de 8.000 tokens e veio cortada. No cenário, o usuário ficaria sem resposta. A maior nota processada tem 27 itens.
+- **Desconto por item (3 erros de valor).** Em uma nota, o modelo devolveu o valor já com desconto em vez do valor impresso na linha. Das 5 linhas com desconto da amostra, acertou 2. A instrução de fazer a soma dos itens bater com o total da nota provavelmente empurra o modelo para esse erro.
+- **Código (1 erro).** Um dígito trocado (6 no lugar de 8) em uma nota amassada.
+- **Categoria (2 erros).** Mussarela classificada como Proteína e torteleta de limão como Carboidrato.
+
+O que deu certo e eu não esperava: em uma nota com item cancelado no meio da lista, caso que o prompt não menciona, o modelo deixou o item cancelado de fora.
+
+Limites desta avaliação:
+
+- Amostra pequena, com notas de 2 a 27 itens. Três notas foram escolhidas de propósito por serem difíceis (manchada, com cancelamento, com descontos).
+- Das 12 notas processadas, 11 são de duas lojas. A terceira loja entrou com uma nota de 2 itens.
+- Uma execução por nota: não mede a variação entre execuções repetidas.
+- As fotos vieram direto da galeria, sem a compressão do WhatsApp que o fluxo real sofre.
+- Categoria tem critério subjetivo. Contei como erro só o que contraria claramente a lista.
+- A conferência foi feita por mim com apoio do Claude, que releu as fotos. Os valores foram validados pela soma de cada nota e os casos duvidosos, checados no papel.
+
 ## Limitações conhecidas
 
-- Ainda não há avaliação quantitativa da extração. Os testes foram feitos com poucas notas, conferidas a olho.
-- A mesma nota pode gerar nomes de item, duração estimada e, às vezes, categorias diferentes entre execuções.
+- Notas longas: uma nota de 58 itens excede o limite de resposta e não é processada, sem aviso ao usuário.
+- Itens com desconto na própria linha: o valor extraído ora é o cheio, ora o com desconto.
+- A mesma nota pode gerar nomes de item, duração estimada e, às vezes, categorias diferentes entre execuções. O nome do estabelecimento também varia entre notas da mesma loja.
 - A comparação de preço usa só o código do produto. Para códigos internos de loja, falta incluir o estabelecimento na busca.
 - Notas com desconto ou acréscimo: a soma das categorias não fecha com o total pago.
 - A busca de histórico lê no máximo 1.000 linhas por cliente.
@@ -83,7 +115,8 @@ Cenário no Make, com uma execução completa:
 
 ## Próximos passos
 
-- Avaliação com 15 a 20 notas de estabelecimentos e layouts diferentes, com gabarito conferido à mão: taxa de acerto por campo e consistência entre execuções repetidas.
+- Ampliar a avaliação: mais lojas, execuções repetidas da mesma nota e fotos comprimidas pelo WhatsApp.
+- Tratar notas longas (limite de resposta maior ou extração em partes) e definir no prompt a regra para item com desconto.
 - Histórico real de compras, em banco de dados, no lugar da planilha.
 - Painel no Looker Studio com gasto por categoria e evolução de preço por produto.
 - Responder perguntas em linguagem natural sobre o histórico de compras.
@@ -94,6 +127,7 @@ Cenário no Make, com uma execução completa:
 make/smartvitta-blueprint.json   cenário do Make, sem chaves
 prompts/prompt_nfce.txt          prompt de extração
 prompts/schema_nfce.json         JSON Schema da resposta
+eval/extrair.py                  script da avaliação (Python, sem bibliotecas externas)
 docs/                            GIF da demonstração e print do cenário
 ```
 
@@ -105,6 +139,12 @@ O blueprint publicado é uma cópia do cenário com chaves e identificadores sub
 2. Substitua os valores de exemplo: `SUA_CHAVE_ANTHROPIC`, `SUA_SECRET_KEY_ZAPI`, `SEU_CHANNEL_ID`, `ID_DA_SUA_PLANILHA` e o número autorizado no primeiro filtro.
 3. Reconecte o webhook, a conta Google e a estrutura de dados do módulo de parse.
 4. Crie a planilha com as colunas: ID CLIENTE, DATA/HORA, ESTABELECIMENTO, PRODUTO, CATEGORIA, QTD, VALOR UNITARIO, VALOR TOTAL, DURACAO ESTIMADA, INSIGHT, VARIACAO DE PRECO, CÓDIGO.
+
+Para repetir a avaliação com as suas notas (a chave da API é lida da variável de ambiente `ANTHROPIC_API_KEY`):
+
+```
+python eval/extrair.py PASTA_DAS_NOTAS PASTA_DE_SAIDA
+```
 
 ## Autor
 
