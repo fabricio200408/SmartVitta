@@ -6,7 +6,9 @@ Projeto pessoal de estudo, construído com Make (automação), API do Claude (Ha
 
 ![Demonstração: envio da foto da nota e resposta do assistente](docs/smartvitta-demo.gif)
 
-<!-- VÍDEO: arraste o arquivo smartvitta-demo.mp4 para esta linha no editor do GitHub, depois que o repositório estiver público -->
+
+https://github.com/user-attachments/assets/3a681983-db79-440d-aabc-e6f3cf7360e4
+
 
 ## O que ele faz
 
