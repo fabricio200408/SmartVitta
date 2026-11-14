@@ -1,0 +1,101 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "estabelecimento",
+    "cnpj",
+    "data_compra",
+    "total_nota",
+    "itens",
+    "destaques"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "ilegivel",
+        "nao_e_nota"
+      ]
+    },
+    "estabelecimento": {
+      "type": "string"
+    },
+    "cnpj": {
+      "type": "string"
+    },
+    "data_compra": {
+      "type": "string"
+    },
+    "total_nota": {
+      "type": "number"
+    },
+    "itens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "item",
+          "codigo",
+          "quantidade",
+          "unidade",
+          "valor_unitario",
+          "valor_total",
+          "categoria",
+          "insight",
+          "dura_dias"
+        ],
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "codigo": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "number"
+          },
+          "unidade": {
+            "type": "string"
+          },
+          "valor_unitario": {
+            "type": "number"
+          },
+          "valor_total": {
+            "type": "number"
+          },
+          "categoria": {
+            "type": "string",
+            "enum": [
+              "Hortifruti",
+              "Proteína",
+              "Laticínio",
+              "Carboidrato",
+              "Bebida",
+              "Gordura Saudável",
+              "Doces e Snacks",
+              "Tempero/Condimento",
+              "Limpeza",
+              "Higiene",
+              "Outros"
+            ]
+          },
+          "insight": {
+            "type": "string"
+          },
+          "dura_dias": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "destaques": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
