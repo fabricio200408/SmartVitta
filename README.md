@@ -88,7 +88,7 @@ O que os erros mostram:
 
 - **Nota de 58 itens não processada.** A resposta estourou o limite de 8.000 tokens e veio cortada. No cenário, o usuário ficaria sem resposta. A maior nota processada tem 27 itens.
 - **Desconto por item (3 erros de valor).** Em uma nota, o modelo devolveu o valor já com desconto em vez do valor impresso na linha. Das 5 linhas com desconto da amostra, acertou 2. A instrução de fazer a soma dos itens bater com o total da nota provavelmente empurra o modelo para esse erro.
-- **Código (1 erro).** Um dígito trocado (6 no lugar de 8) em uma nota amassada.
+- **Código (1 erro).** Um dígito trocado (6 no lugar de 8).
 - **Categoria (2 erros).** Mussarela classificada como Proteína e torteleta de limão como Carboidrato.
 
 O que deu certo e eu não esperava: em uma nota com item cancelado no meio da lista, caso que o prompt não menciona, o modelo deixou o item cancelado de fora.
